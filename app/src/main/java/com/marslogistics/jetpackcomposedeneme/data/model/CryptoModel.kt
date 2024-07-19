@@ -1,3 +1,6 @@
 package com.marslogistics.jetpackcomposedeneme.data.model
 
-class CryptoModel : ArrayList<CryptoModelItem>()
+data class CryptoModel(
+    val `data`: List<Data>,
+    val status: Status
+)

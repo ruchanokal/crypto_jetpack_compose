@@ -1,12 +1,13 @@
 package com.marslogistics.jetpackcomposedeneme.presentation
 
-import com.marslogistics.jetpackcomposedeneme.data.model.CryptoModel
-import com.marslogistics.jetpackcomposedeneme.data.model.CryptoModelItem
+import com.marslogistics.jetpackcomposedeneme.data.model.Data
+import com.marslogistics.jetpackcomposedeneme.data.model.Status
+
 
 data class CryptoState(
-    val loading : Boolean = false,
-    val errorMessage : String = "",
-    val cryptoList: CryptoModel = CryptoModel()
+    var loading : Boolean = false,
+    var cryptoList: List<Data> = emptyList(),
+    var errorMessage: String = ""
 ) {
 
 }
