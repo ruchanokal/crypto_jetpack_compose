@@ -1,5 +1,6 @@
 package com.marslogistics.jetpackcomposedeneme.presentation
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -20,9 +21,16 @@ import javax.inject.Inject
 @HiltViewModel
 class CryptoViewModel @Inject constructor(private val getCryptoUseCase: GetCryptoUseCase) : ViewModel() {
 
+    private val TAG = "CryptoViewModel"
 
-    private var _state = mutableStateOf(CryptoState())
-    val state : State<CryptoState> = _state
+    //private var _state = mutableStateOf(CryptoState())
+    //val state : State<CryptoState> = _state
+
+    var cryptoList = mutableStateOf<List<Data>>(listOf())
+    var errorMessage = mutableStateOf("")
+    var isLoading = mutableStateOf(false)
+
+
     private var job : Job? = null
 
     private var initialCryptoList = listOf<Data>()
@@ -32,7 +40,7 @@ class CryptoViewModel @Inject constructor(private val getCryptoUseCase: GetCrypt
         getCryptoDatas()
     }
 
-    private fun getCryptoDatas() {
+    fun getCryptoDatas() {
 
 //        _state.value = CryptoState()
 
@@ -41,15 +49,23 @@ class CryptoViewModel @Inject constructor(private val getCryptoUseCase: GetCrypt
 
             when (it) {
                 is Resource.Success -> {
-                    _state.value = CryptoState(cryptoList = it.data!!.data )
+                    //_state.value = CryptoState(cryptoList = it.data!!.data )
+                    val cryptoItems = it.data!!.data
+
+                    errorMessage.value = ""
+                    isLoading.value = false
+                    cryptoList.value += cryptoItems
                 }
 
                 is Resource.Error -> {
-                    _state.value = CryptoState(errorMessage = it.data!!.status.error_message )
+                    //_state.value = CryptoState(errorMessage = it.data!!.status.error_message )
+                    errorMessage.value = it.message!!
+                    isLoading.value = false
                 }
 
                 is Resource.Loading -> {
-                    _state.value = CryptoState(loading = true)
+                    //_state.value = CryptoState(loading = true)
+                    errorMessage.value = ""
                 }
             }
 
@@ -58,10 +74,11 @@ class CryptoViewModel @Inject constructor(private val getCryptoUseCase: GetCrypt
     }
 
 
-    private fun search(searchString: String) {
+    fun search(searchString: String) {
 
         val listToSearch = if (isSearchStarted){
-            _state.value.cryptoList
+            //_state.value.cryptoList
+            cryptoList.value
         } else {
             initialCryptoList
         }
@@ -69,19 +86,26 @@ class CryptoViewModel @Inject constructor(private val getCryptoUseCase: GetCrypt
         viewModelScope.launch(Dispatchers.Default) {
 
             if (searchString.isEmpty()){
-                _state.value.cryptoList = initialCryptoList
+                //_state.value.cryptoList = initialCryptoList
+                cryptoList.value = initialCryptoList
                 isSearchStarted = true
                 return@launch
             }
 
+            Log.i(TAG,"listToSearch: ${listToSearch}")
+
             val results = listToSearch.filter {  it.name.contains(searchString,true)}
 
             if (isSearchStarted){
-                initialCryptoList = _state.value.cryptoList
+                //initialCryptoList = _state.value.cryptoList
+                initialCryptoList = cryptoList.value
                 isSearchStarted = false
             }
 
-            _state.value.cryptoList = results
+            Log.i(TAG,"results: ${results.size}")
+            //_state.value.cryptoList = results
+            cryptoList.value = results
+
 
         }
 

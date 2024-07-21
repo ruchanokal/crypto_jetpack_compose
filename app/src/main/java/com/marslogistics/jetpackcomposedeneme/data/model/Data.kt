@@ -1,14 +1,15 @@
 package com.marslogistics.jetpackcomposedeneme.data.model
 
 data class Data(
-    val circulating_supply: Int,
+    val circulating_supply: Double,
     val cmc_rank: Int,
     val date_added: String,
     val id: Int,
     val infinite_supply: Boolean,
     val last_updated: String,
-    val max_supply: Int,
+    val max_supply: Double,
     val name: String,
+    val quote: Quote,
     val num_market_pairs: Int,
     val platform: Any,
     val self_reported_circulating_supply: Any,
@@ -16,5 +17,5 @@ data class Data(
     val slug: String,
     val symbol: String,
     val tags: List<String>,
-    val total_supply: Int
+    val total_supply: Double
 )
